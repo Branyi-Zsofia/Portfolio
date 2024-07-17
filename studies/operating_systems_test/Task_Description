@@ -1,0 +1,11 @@
+Közeledik az UEFA Bajnokok Ligája döntő. (Dortmund- Real Madrid, Június 1, London, Wembley stadion) A mérkőzés előtt az UEFA-nak (szülő folyamat) számos kérdést kell tisztáznia a résztvevő csapatokkal (gyerek folyamatok). 
+
+1, Az UEFA-nak a résztvevőkkel két dolgot kell (többek között) tisztáznia.  Milyen színű mezben lépnek pályára a terveik szerint és hány jegyet kérnek a szurkolóiknak?  A résztvevő csapatok amint készen állnak a konzultációra, ezt jelzéssel tudatják az UEFA felé. Amint a jelzés megjön, az UEFA csövön keresztül válaszol, és elküldi a két kérdést mindkét résztvevőnek, akik ezt elolvassák és a képernyőre írják. Ezután UEFA megvárja a csapat folyamatok (gyerekek) befejeződését, majd ő is terminál.
+
+2, Miután a csapatok megkapják a kérdéseket, kiválasztják (véletlenszerűen) a 3 különféle mez csomagból, hogy melyiket is szeretnék viselni, majd ezt üzenetsoron visszaküldik az UEFA-nak, aki ezt a képernyőre írja. (Definiáljon mindegyik csapatnak 3-3 féle mez csomagot, például: sárga-fekete, piros-fehér, zöld-fehér) Az igényelt szurkolói jegyek számában a pályaválasztó (Dortmund) számára 8, 10 vagy 15 ezer jegy áll rendelkezésre, míg a vendég csapatnak 5, 7 vagy 12 ezer jegy. Ezekből véletlenszerűen választanak, majd az eredményt szintén üzenetsoron visszaküldik, amit az UEFA szintén képernyőre ír.
+
+3, A Wembley stadion befogadóképessége 90000 fő.  Az UEFA rendelkezik a helyek 50%-val, a csapatok által igényelt helyek után megmaradtakat a VIP vendégeknek tartják. Az UEFA ezután osztott memóriába és a képernyőre írja, hogy hány helyet kapnak a csapatok szurkolói (külön-külön, mennyi VIP hely marad, és mennyi jegyet értékesít a rendező.
+
+4, Védje szemaforral az osztott memória használatát.
+
+Oldja meg az alábbi feladatot C nyelven, ami egy Linux rendszeren tud futni. (Ez lehet a tárgy  kiszolgálója (opsys.inf.elte.hu) vagy egy saját lokális Linux rendszer!) Az eredményt (csak a C forrásfájlt, pl: wembley.c) töltse fel legkésőbb 1.5 óra után a kezdést követően ezen a Canvas oldalon. A feladatokat a gyakorlatvezetők fogják értékelni és az eredményt bejegyzik. A feladatban kért jelzés, cső vagy üzenetsor típusa bármelyik tanult lehet. 
