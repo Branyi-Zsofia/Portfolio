@@ -1,0 +1,222 @@
+main():
+  timed_reset()
+  to_start(True)
+  mennyi = {}
+  flowers = [0]
+  while num_unlocked(Unlocks.Leaderboard) < 1:
+  	mennyi = unlocking(mennyi)
+  	
+  	if kellmeg:
+  		#flowers = make(Items.Cactus,5000, flowers)
+  		flowers = make(Items.Bones,2000, flowers)
+  		skip = 0
+  	else:
+  		flowers = make(Items.Pumpkin,mennyi, flowers)
+  		flowers = make(Items.Power,mennyi*1.5, flowers)
+  		flowers = make(Items.Carrot,mennyi, flowers)
+  		flowers = make(Items.Wood, mennyi, flowers)
+  		flowers = make(Items.Hay,mennyi, flowers)
+  		while num_items(Items.Gold) < mennyi:
+  			maze(mennyi)
+  		mennyi += 1000
+  	
+  	if num_items(Items.Bones) >= 2000 :
+  		kellmeg = False
+  	else:
+  		kellmeg = True
+  timed_reset()
+def to_start(a):
+	if a :
+		clear()
+	while get_pos_x()>0:
+		move(East)
+	while get_pos_y()>0:
+		move(North)
+def make(item, num, flowers):
+	is_enough = True
+	tiles = get_world_size() * get_world_size()
+	while(num_items(item) < num and is_enough):
+		is_enough = True
+		if item == Items.Carrot and (num_items(Items.Hay) < (num - num_items(Items.Carrot))  or  num_items(Items.Wood) < (num - num_items(Items.Carrot)) ) :
+			trade(Items.Carrot_Seed, 0)
+			make(Items.Hay, (num - num_items(Items.Carrot)), flowers)
+			make(Items.Wood, (num - num_items(Items.Carrot)), flowers)
+		if item == Items.Pumpkin and num_items(Items.Carrot) < (num - num_items(Items.Pumpkin)) :
+			trade(Items.Pumpkin_Seed, 0)
+			make(Items.Carrot, (num - num_items(Items.Pumpkin))  , flowers)
+		if item == Items.Power and num_items(Items.Carrot) < (num - num_items(Items.Power))  :
+			trade(Items.Sunflower_Seed, 0)
+			make(Items.Carrot, (num - num_items(Items.Power)) , flowers)
+		if item == Items.Power and num_items(Items.Pumpkin) < (num - num_items(Items.Power))  :
+			trade(Items.Fertilizer, 0)
+			make(Items.Pumpkin, (num - num_items(Items.Power)) , flowers)
+		if item == Items.Cactus and num_items(Items.Gold) < (num - num_items(Items.Cactus))  :
+			trade(Items.Cactus_Seed, 0)
+			maze(num - num_items(Items.Cactus))
+		if item == Items.Bones and num_items(Items.Cactus) < tiles*60 :
+			trade(Items.Egg, 0)
+			make(Items.Cactus, tiles*60 , flowers)
+						
+
+		if item == Items.Pumpkin :
+			b = 0
+		
+			for i in range(get_world_size()):
+				for j in range(get_world_size()):
+					if get_entity_type() == Entities.Pumpkin and can_harvest():
+						b += 1
+					elif get_entity_type() == Entities.Pumpkin :
+						b = 0
+					else: 
+						flowers = harvested(flowers,item)
+						while b > tiles * 0.85 and not(can_harvest()):
+							planting(item)
+						b = 0
+					move(North)
+				if b == tiles:
+					flowers = harvested(flowers, item)
+					break
+				move(East)
+		elif item == Items.Bones:
+			while num_items(Items.Cactus) >= tiles*60:
+				trade(Items.Egg, tiles)
+				for i in range(get_world_size()):
+					for j in range(get_world_size()):
+						use_item(Items.Egg)
+						move(North)
+					move(East)
+				for i in range(get_world_size()):
+					for j in range(get_world_size()):
+						harvest()
+						move(North)
+					move(East)
+		elif item == Items.Cactus:
+			to_start(False)
+			siker = False
+			while not(siker):
+				move(North)
+				while get_entity_type() != Entities.Cactus or measure()<5:
+					harvested(flowers,item)
+					planting(item)
+					cacti = measure()
+				move(South)
+				move(East)
+				#while get_entity_type() != Entities.Cactus or measure()<5:
+				if get_entity_type() != Entities.Cactus or measure() < 5:
+					harvest()
+					planting(item)
+				if measure()>=5:
+					siker = True
+				move(West)
+			while get_entity_type() != Entities.Cactus   :
+				harvested(flowers,item)
+			harvested(flowers,item)
+		else:
+			notenough_fert = False
+			for i in range(get_world_size()):
+				if notenough_fert:
+					break
+				for j in range(get_world_size()):
+					if  (can_harvest() or get_entity_type() != item) and not(notenough_fert) :
+						flowers = harvested(flowers, item)
+						while len(flowers) > tiles and measure() == max(flowers)  and item == Items.Power:
+							notenough_fert = num_items(Items.Pumpkin) < (num - num_items(Items.Power)) 
+							if notenough_fert or max(flowers) == 7:
+								break
+							while not(can_harvest()) and not(max(flowers) == 7):
+								if notenough_fert:
+									break
+								if num_items(Items.Fertilizer) < 10:
+									trade(Items.Fertilizer)
+								use_item(Items.Fertilizer)
+							flowers = harvested(flowers, item)
+						if notenough_fert:
+							break
+					move(North)
+				move(East)
+	return flowers
+def harvested(flowers, item):
+	a = 0
+	harvestable = True
+	if get_entity_type() == Entities.Sunflower:
+		if measure() == max(flowers):
+			flowers.remove(measure())
+		else:
+			harvestable = False
+			lenght = len(flowers)
+	if (harvestable and can_harvest()) or get_entity_type() == None:
+		harvest()
+		planting(item)
+		if item == Items.Power:
+			flowers.append(measure())
+	return flowers
+def tilted(b):
+	if (b and get_ground_type() == Grounds.Turf) or (not(b) and get_ground_type() == Grounds.Soil):
+		till()
+def planting(a):
+		if a == Items.Carrot:
+			tilted(True)
+			if num_items(Items.Carrot_Seed) < 10:
+				trade(Items.Carrot_Seed)
+			plant(Entities.Carrots)
+		elif a == Items.Cactus:
+			tilted(True)
+			if num_items(Items.Cactus_Seed) < 10:
+				trade(Items.Cactus_Seed)
+			plant(Entities.Cactus)
+		elif a == Items.Power:
+			tilted(True)
+			if num_items(Items.Sunflower_Seed) < 10:
+				trade(Items.Sunflower_Seed)
+			plant(Entities.Sunflower)
+		elif a == Items.Hay:
+			tilted(False)		
+		elif a == Items.Bones:
+			if num_items(Items.Egg) < 10:
+				trade(Items.Egg)
+			use_item(Items.Egg)
+		elif a == Items.Pumpkin:
+			tilted(True)
+			if num_items(Items.Pumpkin_Seed) < 10:
+				trade(Items.Pumpkin_Seed)
+			plant(Entities.Pumpkin)
+		elif a == Items.Wood:
+			if  (get_pos_x() + get_pos_y()) % 2 != 0:  
+				plant(Entities.Bush)
+			else:
+				plant(Entities.Tree)
+		watering()
+def watering():
+	if num_items(Items.Water_Tank) < get_world_size() * get_world_size() and num_items(Items.Wood) > 1000:
+		trade(Items.Empty_Tank)
+	if get_water() < 0.8 and num_items(Items.Water_Tank) > 0:
+		use_item(Items.Water_Tank)
+	def maze(mennyi):	
+	while mennyi > num_items(Items.Gold) :
+		to_start(True)
+		plant(Entities.Bush)
+		rotation = {North:South, East:West, South:North, West:East}
+		stack = []
+		for i in range(get_world_size()):
+			rows = []
+			for j in range(get_world_size()):
+				rows.append([North, West, East, South])
+			stack.append(rows)
+		while get_entity_type() != Entities.Hedge and get_entity_type() != Entities.Treasure:
+			if num_items(Items.Fertilizer) < 10:
+				trade(Items.Fertilizer)
+			use_item(Items.Fertilizer)
+		while get_entity_type() != Entities.Treasure:
+			y = get_pos_y()
+			x = get_pos_x()
+			#row = stack[y].pop[x]
+			row = stack[y][x]
+			way = row.pop()
+			if move(way):
+				if rotation[way] in stack[get_pos_y()][get_pos_x()]:
+					stack[get_pos_y()][get_pos_x()].remove(rotation[way])
+					stack[get_pos_y()][get_pos_x()].insert(0,rotation[way])
+				else:
+					move(rotation[way])
+				row.insert(0,way)
+		harvest()
